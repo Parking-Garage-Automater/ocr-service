@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  ocr-api:
+    build: .
+    container_name: ocr-app
+    ports:
+      - "7134:7134"
+    env_file:
+      - .env
+    volumes:
+      - ./saved_images:/app/saved_images
+    restart: unless-stopped
