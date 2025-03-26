@@ -4,7 +4,7 @@ from routes import gates, images, dashboard
 from middleware.dependencies import verify_api_key
 from middleware.limiter import limiter
 from slowapi.errors import RateLimitExceeded
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.middleware import SlowAPIMiddleware
 
 
