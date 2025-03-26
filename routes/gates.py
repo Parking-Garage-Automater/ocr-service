@@ -6,6 +6,7 @@ from services.ocr import extract_number
 from services.mqtt import publish
 from config import MQTT_TOPIC, MQTT_MESSAGE
 from services.image_utils import save_image
+from services.gates import open_gate
 
 router = APIRouter()
 
@@ -15,12 +16,16 @@ async def process_gate_image(gate: str, request: Request):
     image_bytes = await request.body()
     img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
     raw_filename, _ = save_image(img, "raw")
-
     raw_text, processed, number = extract_number(img)
     gate_opened = False
 
     if number:
-        publish(MQTT_TOPIC, MQTT_MESSAGE)
+        try:
+            open_gate(number, gate)
+        except Exception as e:
+            return JSONResponse({
+                "error": f"Failed to open gate: {e}"
+            }, status_code=404)
         save_image(processed, f"{number}_proc")
         gate_opened = True
 
