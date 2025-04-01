@@ -15,7 +15,6 @@ router = APIRouter()
 async def process_gate_image(gate: str, request: Request):
     image_bytes = await request.body()
     img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
-    raw_filename, _ = save_image(img, "raw")
     raw_text, processed, number = extract_number(img)
     gate_opened = False
 
@@ -26,6 +25,7 @@ async def process_gate_image(gate: str, request: Request):
             return JSONResponse({
                 "error": f"Failed to open gate: {e}"
             }, status_code=404)
+        save_image(img, "raw")
         save_image(processed, f"{number}_proc")
         gate_opened = True
 
