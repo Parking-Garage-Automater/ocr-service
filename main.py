@@ -8,8 +8,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.middleware import SlowAPIMiddleware
 
 
-app = FastAPI(dependencies=[Depends(
-    verify_api_key)], root_path="/ocr")
+app = FastAPI(root_path="/ocr")
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
@@ -22,6 +21,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(gates.router)
-app.include_router(images.router)
+
 app.include_router(dashboard.router)
+app.include_router(images.router)
+app.include_router(gates.router, dependencies=[Depends(
+    verify_api_key)])
