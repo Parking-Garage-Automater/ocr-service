@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import easyocr
+import re
 
 reader = easyocr.Reader(['en'])
 
@@ -19,6 +20,7 @@ def extract_number(img):
     processed = preprocess_image(img)
     results = reader.readtext(processed, detail=0)
     for text in results:
+        text = re.sub(r'[^\d]+', '', text)
         if text.strip().isdigit() and len(text.strip()) == 4:
             return results, processed, text.strip()
     return results, processed, None
